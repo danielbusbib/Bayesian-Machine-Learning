@@ -27,15 +27,10 @@ def gaussian_basis_functions(centers: np.ndarray, beta: float) -> Callable:
     """
 
     def gbf(X):
-        n = X.shape[0]
-        b = centers.shape[0]
-        values = []
-        for x in X:
-            values.append(1)
-            for c in centers:
-                values.append(np.exp(-np.sum((x - c) ** 2) / (2 * beta ** 2)))
-        mat = np.reshape(values, (n, b + 1))  # reshape to design matrix size
-        return mat
+        mat = (np.tile(X, (len(centers), 1)).T - centers).T
+        mat *= mat
+        mat = mat / (2 * beta**2)
+        return np.insert(np.exp(-mat), 0, np.ones(len(X)), axis=0).T
 
     return gbf
 
@@ -234,15 +229,16 @@ def main():
     for d in degrees:
         ln = LinearRegression(polynomial_basis_functions(d)).fit(train_hours, train)
 
+        err = np.mean((test - ln.predict(test_hours)) ** 2)
         # print average squared error performance
-        print(f'Average squared error with LR and d={d} is {np.mean((test - ln.predict(test_hours)) ** 2):.2f}')
+        print(f'Average squared error with LR and d={d} is {err:.2f}')
 
         # plot graphs for linear regression part
         plt.subplot(1, 2, ind)
         ind += 1
         plt.scatter(train_hours, train, label="train true")
         plt.scatter(test_hours, test, label="test true")
-        plt.plot(nov16_hours, ln.predict(nov16_hours), label="preicted")
+        plt.plot(nov16_hours, ln.predict(nov16_hours), label="predicted")
         plt.title(f"Polynomial regression with d={d}")
         plt.xlabel("hour"), plt.ylabel("temperature")
         plt.legend()
