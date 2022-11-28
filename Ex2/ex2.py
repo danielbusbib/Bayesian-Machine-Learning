@@ -230,6 +230,7 @@ def main():
     # setup the model parameters
     degrees = [3, 7]
     # ----------------------------------------- Classical Linear Regression
+    ind = 1
     for d in degrees:
         ln = LinearRegression(polynomial_basis_functions(d)).fit(train_hours, train)
 
@@ -237,14 +238,16 @@ def main():
         print(f'Average squared error with LR and d={d} is {np.mean((test - ln.predict(test_hours)) ** 2):.2f}')
 
         # plot graphs for linear regression part
+        plt.subplot(1, 2, ind)
+        ind += 1
         plt.scatter(train_hours, train, label="train true")
         plt.scatter(test_hours, test, label="test true")
         plt.plot(nov16_hours, ln.predict(nov16_hours), label="preicted")
         plt.title(f"Polynomial regression with d={d}")
         plt.xlabel("hour"), plt.ylabel("temperature")
         plt.legend()
-        plt.show()
     # ----------------------------------------- Bayesian Linear Regression
+    plt.show()
 
     # load the historic data
     temps = np.load('jerus_daytemps.npy').astype(np.float64)
