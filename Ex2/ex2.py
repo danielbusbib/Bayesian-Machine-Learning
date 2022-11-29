@@ -29,7 +29,7 @@ def gaussian_basis_functions(centers: np.ndarray, beta: float) -> Callable:
     def gbf(X):
         mat = (np.tile(X, (len(centers), 1)).T - centers).T
         mat *= mat
-        mat = mat / (2 * beta**2)
+        mat = mat / (2 * beta ** 2)
         return np.insert(np.exp(-mat), 0, np.ones(len(X)), axis=0).T
 
     return gbf
@@ -44,20 +44,10 @@ def spline_basis_functions(knots: np.ndarray) -> Callable:
     """
 
     def csbf(X: np.ndarray):
-        n = X.shape[0]
-        k = knots.shape[0]
-        values = []
-        for x in X:
-            values += [1, x, x ** 2, x ** 3]
-            for knot in knots:
-                m = x - knot
-                if m >= 0:
-                    values.append(m ** 3)
-                else:
-                    values.append(0)
-
-        mat = np.reshape(values, (n, k + 4))  # reshape to design matrix size
-        return mat
+        p = np.vander(X, 4, increasing=True)
+        m = (np.tile(X, (len(knots), 1)).T - np.tile(knots, (len(X), 1))) ** 3
+        m[m < 0] = 0
+        return np.hstack([p, m])
 
     return csbf
 
