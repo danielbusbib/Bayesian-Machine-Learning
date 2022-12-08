@@ -249,12 +249,12 @@ def main():
     # setup the model parameters
     sigma = 0.25
     degrees = [3, 7]  # polynomial basis functions degrees
-    beta = 2.5  # lengthscale for Gaussian basis functions
+    beta = 3  # lengthscale for Gaussian basis functions
 
     # sets of centers S_1, S_2, and S_3
     centers = [np.array([6, 12, 18]),
                np.array([4, 8, 12, 16, 20]),
-               np.array([3, 6, 9, 12, 15, 18, 21])]
+               np.array([2, 4, 8, 12, 16, 20, 22])]
 
     # sets of knots K_1, K_2 and K_3 for the regression splines
     knots = [np.array([12]),
